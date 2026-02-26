@@ -1,0 +1,193 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/config/knobs.example.yaml b/config/knobs.example.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..cffabfb01cc7d455fa12850cdaf0471d66ebaa4f
+--- /dev/null
++++ b/config/knobs.example.yaml
+@@ -0,0 +1,183 @@
++serial:
++  port: /dev/ttyUSB0
++  baudrate: 38400
++  timeout: 0.2
++  bytesize: 8
++  parity: N
++  stopbits: 1
++
++cat:
++  protocol: ft710
++  terminator: ";"
++
++runtime:
++  debounce_ms: 3
++  min_command_interval_ms: 30
++
++state:
++  # LCD运行页可展示
++  tx_power_w: 10
++  swr: 1.1
++  s_meter: "S5"
++
++  # VFO/控制相关状态
++  vfo_a_hz: 7100000
++  step_hz: 100
++  af_gain: 100
++  rf_gain: 120
++  mic_gain: 40
++  tx_power_set: 10
++
++display:
++  lcd:
++    model: ili9341_2p8
++    interface: spi
++    telemetry_pages: [tx_power_w, swr, s_meter]
++  oled:
++    model: ssd1306_128x64
++    bus: i2c
++    devices:
++      op_knob_1: {address: 0x3C}
++      op_knob_2: {address: 0x3D}
++      op_knob_3: {address: 0x3E}
++      op_knob_4: {address: 0x3F}
++    default_assignments:
++      op_knob_1: vfo
++      op_knob_2: af_gain
++      op_knob_3: rf_gain
++      op_knob_4: tx_power
++    profiles:
++      - name: vfo
++        value_key: vfo_a_hz
++        actions:
++          cw:
++            - type: math_update
++              key: vfo_a_hz
++              op: add
++              delta_key: step_hz
++              min: 30000
++              max: 75000000
++            - type: send_template
++              command: "FA{vfo_a_hz:011d}"
++          ccw:
++            - type: math_update
++              key: vfo_a_hz
++              op: sub
++              delta_key: step_hz
++              min: 30000
++              max: 75000000
++            - type: send_template
++              command: "FA{vfo_a_hz:011d}"
++          press:
++            - type: step_cycle
++              key: step_hz
++              values: [10, 50, 100, 500, 1000]
++
++      - name: af_gain
++        value_key: af_gain
++        actions:
++          cw:
++            - type: math_update
++              key: af_gain
++              op: add
++              delta: 1
++              min: 0
++              max: 255
++            - type: send_template
++              command: "AG{af_gain:03d}"
++          ccw:
++            - type: math_update
++              key: af_gain
++              op: sub
++              delta: 1
++              min: 0
++              max: 255
++            - type: send_template
++              command: "AG{af_gain:03d}"
++
++      - name: rf_gain
++        value_key: rf_gain
++        actions:
++          cw:
++            - type: math_update
++              key: rf_gain
++              op: add
++              delta: 1
++              min: 0
++              max: 255
++            - type: send_template
++              command: "RG{rf_gain:03d}"
++          ccw:
++            - type: math_update
++              key: rf_gain
++              op: sub
++              delta: 1
++              min: 0
++              max: 255
++            - type: send_template
++              command: "RG{rf_gain:03d}"
++
++      - name: mic_gain
++        value_key: mic_gain
++        actions:
++          cw:
++            - type: math_update
++              key: mic_gain
++              op: add
++              delta: 1
++              min: 0
++              max: 100
++            - type: send_template
++              command: "MG{mic_gain:03d}"
++          ccw:
++            - type: math_update
++              key: mic_gain
++              op: sub
++              delta: 1
++              min: 0
++              max: 100
++            - type: send_template
++              command: "MG{mic_gain:03d}"
++
++      - name: tx_power
++        value_key: tx_power_set
++        actions:
++          cw:
++            - type: math_update
++              key: tx_power_set
++              op: add
++              delta: 1
++              min: 5
++              max: 100
++            - type: send_template
++              command: "PC{tx_power_set:03d}"
++          ccw:
++            - type: math_update
++              key: tx_power_set
++              op: sub
++              delta: 1
++              min: 5
++              max: 100
++            - type: send_template
++              command: "PC{tx_power_set:03d}"
++
++knobs:
++  - name: op_knob_1
++    kind: operation
++    pins: {a: 17, b: 27, button: 22}
++
++  - name: op_knob_2
++    kind: operation
++    pins: {a: 5, b: 6, button: 13}
++
++  - name: op_knob_3
++    kind: operation
++    pins: {a: 23, b: 24, button: 25}
++
++  - name: op_knob_4
++    kind: operation
++    pins: {a: 16, b: 20, button: 21}
++
++  - name: cfg_knob
++    kind: config
++    pins: {a: 12, b: 19, button: 26}
+ 
+EOF
+)

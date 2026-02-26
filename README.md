@@ -1,10 +1,3 @@
- (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/README.md b/README.md
-new file mode 100644
-index 0000000000000000000000000000000000000000..3d79983e7dd9499fb3c0432765c1f138cf861795
---- /dev/null
-+++ b/README.md
-@@ -0,0 +1,77 @@
 +# HyTalk - Yaesu FT-710 CAT 多旋钮控制器（Raspberry Pi）
 +
 +本版本按你的硬件目标设计：
@@ -82,6 +75,3 @@ index 0000000000000000000000000000000000000000..3d79983e7dd9499fb3c0432765c1f138
 +- 当前 LCD/OLED 为**抽象层**，默认以日志方式输出，便于先跑通控制逻辑；
 +- 接入真实屏幕时，替换 `LcdDisplay` / `OledDisplay` 的渲染实现即可；
 +- 本版本会校验旋钮数量必须是 **4 个 operation + 1 个 config**。
- 
-EOF
-)
