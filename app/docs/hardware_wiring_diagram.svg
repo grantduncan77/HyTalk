@@ -1,0 +1,112 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/docs/hardware_wiring_diagram.svg b/docs/hardware_wiring_diagram.svg
+new file mode 100644
+index 0000000000000000000000000000000000000000..30b2ce183c11aa7a60d6cff1d56f40e5f9cbd8ce
+--- /dev/null
++++ b/docs/hardware_wiring_diagram.svg
+@@ -0,0 +1,102 @@
++<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980">
++  <defs>
++    <style>
++      .title { font: bold 30px sans-serif; fill: #1f2937; }
++      .subtitle { font: 18px sans-serif; fill: #334155; }
++      .box { fill: #f8fafc; stroke: #334155; stroke-width: 2; rx: 12; ry: 12; }
++      .pi { fill: #e0f2fe; }
++      .lcd { fill: #fee2e2; }
++      .oled { fill: #ecfccb; }
++      .enc { fill: #fef9c3; }
++      .txt { font: 16px sans-serif; fill: #0f172a; }
++      .small { font: 14px sans-serif; fill: #334155; }
++      .wire-uart { stroke: #ef4444; stroke-width: 3; fill: none; marker-end: url(#arrow); }
++      .wire-i2c { stroke: #16a34a; stroke-width: 3; fill: none; marker-end: url(#arrow); }
++      .wire-gpio { stroke: #2563eb; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
++      .wire-pwr { stroke: #7c3aed; stroke-width: 2.5; fill: none; marker-end: url(#arrow); stroke-dasharray: 6 5; }
++      .legend { font: 15px sans-serif; fill: #111827; }
++    </style>
++    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
++      <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke" />
++    </marker>
++  </defs>
++
++  <text x="30" y="50" class="title">HyTalk 硬件接线图（Raspberry Pi Zero 2 W + FT-710）</text>
++  <text x="30" y="82" class="subtitle">4 个操作旋钮 + 1 个配置旋钮 + 4x OLED(0.91" IIC 128x32) + 2.4" UART TFT 触摸屏 + Yaesu CAT 串口</text>
++
++  <!-- Pi -->
++  <rect x="560" y="160" width="480" height="430" class="box pi"/>
++  <text x="590" y="200" class="txt">Raspberry Pi Zero 2 W</text>
++  <text x="590" y="230" class="small">I2C1: SDA(GPIO2, Pin3), SCL(GPIO3, Pin5)</text>
++  <text x="590" y="255" class="small">UART0: TX(GPIO14, Pin8), RX(GPIO15, Pin10)</text>
++  <text x="590" y="280" class="small">CAT UART(USB-TTL): /dev/ttyUSB0</text>
++  <text x="590" y="305" class="small">3V3: Pin1 / GND: Pin6/9/14/20/25/30/34/39</text>
++
++  <text x="590" y="350" class="small">旋钮 GPIO 示例：</text>
++  <text x="610" y="375" class="small">OP1: A17 B27 BTN22</text>
++  <text x="610" y="398" class="small">OP2: A5  B6  BTN13</text>
++  <text x="610" y="421" class="small">OP3: A23 B24 BTN25</text>
++  <text x="610" y="444" class="small">OP4: A16 B20 BTN21</text>
++  <text x="610" y="467" class="small">CFG: A12 B19 BTN26</text>
++
++  <!-- TFT -->
++  <rect x="1160" y="180" width="360" height="210" class="box lcd"/>
++  <text x="1185" y="220" class="txt">陶晶驰 2.4" UART TFT 触摸屏</text>
++  <text x="1185" y="248" class="small">分辨率 320x240</text>
++  <text x="1185" y="272" class="small">VCC, GND, TX, RX (+触摸协议同串口)</text>
++
++  <!-- Radio -->
++  <rect x="1160" y="430" width="360" height="160" class="box"/>
++  <text x="1185" y="470" class="txt">Yaesu FT-710</text>
++  <text x="1185" y="495" class="small">CAT 接口（经 USB-TTL/USB 串口）</text>
++  <text x="1185" y="520" class="small">38400, 8N1, ';' 结尾</text>
++
++  <!-- OLEDs -->
++  <rect x="80" y="160" width="360" height="90" class="box oled"/>
++  <text x="105" y="195" class="txt">OLED #1 (OP1)</text>
++  <text x="105" y="220" class="small">0.91" IIC 128x32, Addr 0x3C</text>
++
++  <rect x="80" y="270" width="360" height="90" class="box oled"/>
++  <text x="105" y="305" class="txt">OLED #2 (OP2)</text>
++  <text x="105" y="330" class="small">0.91" IIC 128x32, Addr 0x3D</text>
++
++  <rect x="80" y="380" width="360" height="90" class="box oled"/>
++  <text x="105" y="415" class="txt">OLED #3 (OP3)</text>
++  <text x="105" y="440" class="small">0.91" IIC 128x32, Addr 0x3E</text>
++
++  <rect x="80" y="490" width="360" height="90" class="box oled"/>
++  <text x="105" y="525" class="txt">OLED #4 (OP4)</text>
++  <text x="105" y="550" class="small">0.91" IIC 128x32, Addr 0x3F</text>
++
++  <!-- Encoders -->
++  <rect x="80" y="640" width="280" height="70" class="box enc"/>
++  <text x="100" y="683" class="txt">操作旋钮 OP1~OP4 (A/B/SW)</text>
++  <rect x="380" y="640" width="280" height="70" class="box enc"/>
++  <text x="400" y="683" class="txt">配置旋钮 CFG (A/B/SW)</text>
++
++  <!-- Wires -->
++  <path d="M 440 205 C 500 205, 520 205, 560 205" class="wire-i2c"/>
++  <path d="M 440 315 C 500 315, 520 240, 560 240" class="wire-i2c"/>
++  <path d="M 440 425 C 500 425, 520 275, 560 275" class="wire-i2c"/>
++  <path d="M 440 535 C 500 535, 520 310, 560 310" class="wire-i2c"/>
++
++  <path d="M 1040 255 C 1090 255, 1110 255, 1160 255" class="wire-uart"/>
++  <path d="M 1040 465 C 1090 465, 1110 465, 1160 465" class="wire-uart"/>
++
++  <path d="M 360 675 C 470 675, 510 500, 560 500" class="wire-gpio"/>
++  <path d="M 660 675 C 740 675, 780 530, 840 530" class="wire-gpio"/>
++
++  <path d="M 260 580 C 320 610, 500 590, 620 560" class="wire-pwr"/>
++  <path d="M 1340 390 C 1300 460, 1180 560, 1020 560" class="wire-pwr"/>
++
++  <!-- Legend -->
++  <rect x="1060" y="640" width="460" height="250" class="box"/>
++  <text x="1085" y="680" class="txt">图例 / 注意事项</text>
++  <line x1="1085" y1="710" x2="1170" y2="710" class="wire-uart"/><text x="1185" y="716" class="legend">UART（TFT / CAT）</text>
++  <line x1="1085" y1="740" x2="1170" y2="740" class="wire-i2c"/><text x="1185" y="746" class="legend">I2C（4x OLED 共总线）</text>
++  <line x1="1085" y1="770" x2="1170" y2="770" class="wire-gpio"/><text x="1185" y="776" class="legend">GPIO（编码器 A/B/SW）</text>
++  <line x1="1085" y1="800" x2="1170" y2="800" class="wire-pwr"/><text x="1185" y="806" class="legend">电源/地（示意）</text>
++  <text x="1085" y="840" class="small">1) OLED 必须使用不同 I2C 地址（0x3C~0x3F）。</text>
++  <text x="1085" y="864" class="small">2) TFT、CAT 串口电平需匹配（建议 3.3V TTL 或 USB 串口）。</text>
++  <text x="1085" y="888" class="small">3) 所有模块共地；编码器建议硬件去抖与屏蔽线。</text>
++</svg>
+ 
+EOF
+)
