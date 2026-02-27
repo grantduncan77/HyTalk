@@ -1,10 +1,14 @@
  (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
 diff --git a/config/knobs.example.yaml b/config/knobs.example.yaml
 new file mode 100644
-index 0000000000000000000000000000000000000000..cffabfb01cc7d455fa12850cdaf0471d66ebaa4f
+index 0000000000000000000000000000000000000000..9e1cd2129d7d064f305255d45cefbb7ea3b1b059
 --- /dev/null
 +++ b/config/knobs.example.yaml
-@@ -0,0 +1,183 @@
+@@ -0,0 +1,194 @@
++platform:
++  board: raspberry_pi_zero_2w
++  alias: pi_2zw
++
 +serial:
 +  port: /dev/ttyUSB0
 +  baudrate: 38400
@@ -20,6 +24,7 @@ index 0000000000000000000000000000000000000000..cffabfb01cc7d455fa12850cdaf0471d
 +runtime:
 +  debounce_ms: 3
 +  min_command_interval_ms: 30
++  menu_idle_timeout_s: 10
 +
 +state:
 +  # LCD运行页可展示
@@ -37,12 +42,18 @@ index 0000000000000000000000000000000000000000..cffabfb01cc7d455fa12850cdaf0471d
 +
 +display:
 +  lcd:
-+    model: ili9341_2p8
-+    interface: spi
++    model: taojinchi_2p4_uart_tft_touch
++    interface: uart
++    touch: true
++    resolution: [320, 240]
++    touch_switch_page: true
 +    telemetry_pages: [tx_power_w, swr, s_meter]
 +  oled:
-+    model: ssd1306_128x64
++    model: ssd1306_128x32_0p91
 +    bus: i2c
++    interface: iic_4pin
++    size_inch: 0.91
++    resolution: [128, 32]
 +    devices:
 +      op_knob_1: {address: 0x3C}
 +      op_knob_2: {address: 0x3D}
