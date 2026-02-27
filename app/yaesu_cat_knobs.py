@@ -1,10 +1,10 @@
  (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
 diff --git a/app/yaesu_cat_knobs.py b/app/yaesu_cat_knobs.py
 new file mode 100644
-index 0000000000000000000000000000000000000000..0e9aad3c18625e1204f1dd64bc8142b70ef8d074
+index 0000000000000000000000000000000000000000..ba91c12f44306c59359b1e63aca87bb4fcd41993
 --- /dev/null
 +++ b/app/yaesu_cat_knobs.py
-@@ -0,0 +1,458 @@
+@@ -0,0 +1,475 @@
 +#!/usr/bin/env python3
 +"""Yaesu CAT multi-knob controller for Raspberry Pi.
 +
@@ -74,7 +74,7 @@ index 0000000000000000000000000000000000000000..0e9aad3c18625e1204f1dd64bc8142b7
 +
 +
 +class LcdDisplay:
-+    """2.8寸LCD抽象层；当前实现为日志输出，便于后续接入真实驱动。"""
++    """LCD抽象层；当前实现为日志输出，便于后续接入真实驱动。"""
 +
 +    def __init__(self, cfg: Dict[str, Any]) -> None:
 +        self.cfg = cfg
@@ -87,13 +87,12 @@ index 0000000000000000000000000000000000000000..0e9aad3c18625e1204f1dd64bc8142b7
 +            ",".join(profiles),
 +        )
 +
-+    def show_telemetry(self, telemetry: Dict[str, Any]) -> None:
-+        LOGGER.info(
-+            "[LCD] TELEMETRY power=%sW swr=%s s-meter=%s",
-+            telemetry.get("tx_power_w", "?"),
-+            telemetry.get("swr", "?"),
-+            telemetry.get("s_meter", "?"),
-+        )
++    def show_telemetry_page(self, page_name: str, page_value: Any) -> None:
++        LOGGER.info("[LCD] PAGE %s => %s", page_name, page_value)
++
++    def poll_touch_event(self) -> bool:
++        """返回True表示检测到触摸，用于切换显示页。"""
++        return False
 +
 +
 +class OledDisplay:
@@ -273,6 +272,7 @@ index 0000000000000000000000000000000000000000..0e9aad3c18625e1204f1dd64bc8142b7
 +        runtime_cfg = config.get("runtime", {})
 +        self.debounce_ms = int(runtime_cfg.get("debounce_ms", 3))
 +        min_interval_ms = int(runtime_cfg.get("min_command_interval_ms", 30))
++        self.menu_idle_timeout_s = int(runtime_cfg.get("menu_idle_timeout_s", 10))
 +
 +        self.cat = CatClient(
 +            serial_cfg=config["serial"],
@@ -299,6 +299,8 @@ index 0000000000000000000000000000000000000000..0e9aad3c18625e1204f1dd64bc8142b7
 +
 +        self.stop_event = threading.Event()
 +        self.knobs: List[KnobRuntime] = []
++        self.last_config_activity = time.monotonic()
++        self.telemetry_page_idx = 0
 +
 +    def start(self, knobs_cfg: List[Dict[str, Any]]) -> None:
 +        for knob_cfg in knobs_cfg:
@@ -310,8 +312,10 @@ index 0000000000000000000000000000000000000000..0e9aad3c18625e1204f1dd64bc8142b7
 +
 +        LOGGER.info("Controller started with %d knobs", len(self.knobs))
 +        while not self.stop_event.is_set():
++            self._handle_menu_idle_timeout()
++            self._handle_lcd_touch()
 +            self._update_lcd_runtime_page()
-+            time.sleep(1.0)
++            time.sleep(0.2)
 +
 +    def close(self) -> None:
 +        for item in self.knobs:
@@ -320,15 +324,26 @@ index 0000000000000000000000000000000000000000..0e9aad3c18625e1204f1dd64bc8142b7
 +                item.button.close()
 +        self.cat.close()
 +
-+    def _update_lcd_runtime_page(self) -> None:
-+        telemetry = {
-+            "tx_power_w": self.executor.state.get("tx_power_w", 0),
-+            "swr": self.executor.state.get("swr", 1.0),
-+            "s_meter": self.executor.state.get("s_meter", "S0"),
-+            "pages": self.telemetry_pages,
-+        }
++    def _handle_menu_idle_timeout(self) -> None:
 +        if not self.assignment_mgr.menu_active:
-+            self.lcd.show_telemetry(telemetry)
++            return
++        if time.monotonic() - self.last_config_activity >= self.menu_idle_timeout_s:
++            LOGGER.info("Config knob idle timeout reached; exit menu and return telemetry view")
++            self.assignment_mgr.leave_menu()
++
++    def _handle_lcd_touch(self) -> None:
++        if self.assignment_mgr.menu_active:
++            return
++        if self.lcd.poll_touch_event():
++            self.telemetry_page_idx = (self.telemetry_page_idx + 1) % max(1, len(self.telemetry_pages))
++
++    def _update_lcd_runtime_page(self) -> None:
++        if self.assignment_mgr.menu_active:
++            return
++
++        page_name = self.telemetry_pages[self.telemetry_page_idx % len(self.telemetry_pages)]
++        page_value = self.executor.state.get(page_name, "-")
++        self.lcd.show_telemetry_page(page_name, page_value)
 +
 +    def _refresh_oleds(self) -> None:
 +        for knob_name in self.assignment_mgr.operation_knob_names:
@@ -382,6 +397,7 @@ index 0000000000000000000000000000000000000000..0e9aad3c18625e1204f1dd64bc8142b7
 +        if kind == "config":
 +            if not self.assignment_mgr.menu_active:
 +                return
++            self.last_config_activity = time.monotonic()
 +            if self.executor.state.get("menu_focus", "knob") == "knob":
 +                self.assignment_mgr.cycle_knob(clockwise)
 +            else:
@@ -395,6 +411,7 @@ index 0000000000000000000000000000000000000000..0e9aad3c18625e1204f1dd64bc8142b7
 +
 +    def _on_press(self, knob_name: str, kind: str) -> None:
 +        if kind == "config":
++            self.last_config_activity = time.monotonic()
 +            if not self.assignment_mgr.menu_active:
 +                self.assignment_mgr.enter_menu()
 +                self.executor.state["menu_focus"] = "knob"
@@ -463,3 +480,6 @@ index 0000000000000000000000000000000000000000..0e9aad3c18625e1204f1dd64bc8142b7
 +
 +if __name__ == "__main__":
 +    sys.exit(main(sys.argv[1:]))
+ 
+EOF
+)
