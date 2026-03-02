@@ -1,0 +1,37 @@
+{
+  "screen": {
+    "model": "taojinchi_2p4_uart_tft_touch",
+    "resolution": [320, 240],
+    "theme": "dark_cyan"
+  },
+  "pages": [
+    {
+      "id": "menu_assign",
+      "title": "Knob Assign",
+      "widgets": [
+        {"type": "text", "key": "selected_knob"},
+        {"type": "text", "key": "selected_profile"},
+        {"type": "list", "key": "profiles"}
+      ],
+      "touch_actions": ["confirm"]
+    },
+    {
+      "id": "telemetry_power",
+      "title": "TX POWER",
+      "widgets": [{"type": "value", "key": "tx_power_w", "unit": "W"}],
+      "touch_actions": ["next_page"]
+    },
+    {
+      "id": "telemetry_swr",
+      "title": "SWR",
+      "widgets": [{"type": "value", "key": "swr", "unit": ":1"}],
+      "touch_actions": ["next_page"]
+    },
+    {
+      "id": "telemetry_smeter",
+      "title": "S-METER",
+      "widgets": [{"type": "value", "key": "s_meter"}],
+      "touch_actions": ["next_page"]
+    }
+  ]
+}
