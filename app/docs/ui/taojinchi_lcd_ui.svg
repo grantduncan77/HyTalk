@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" viewBox="0 0 1280 900">
+  <defs>
+    <style>
+      .bg { fill:#0b1220; }
+      .screen { fill:#111827; stroke:#22d3ee; stroke-width:4; rx:20; }
+      .title { font: bold 24px sans-serif; fill:#e5e7eb; }
+      .label { font: 16px sans-serif; fill:#9ca3af; }
+      .value { font: bold 36px monospace; fill:#22d3ee; }
+      .btn { fill:#1f2937; stroke:#374151; stroke-width:2; rx:8; }
+      .btnText { font:14px sans-serif; fill:#e5e7eb; }
+      .card { fill:#0f172a; stroke:#334155; stroke-width:2; rx:12; }
+      .ok { fill:#10b981; }
+      .warn { fill:#f59e0b; }
+      .danger { fill:#ef4444; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1280" height="900" class="bg"/>
+  <text x="40" y="50" class="title">陶晶驰 2.4 寸串口 TFT（320x240）界面设计稿</text>
+
+  <!-- MENU PAGE -->
+  <rect x="40" y="90" width="360" height="270" class="screen"/>
+  <text x="60" y="120" class="label">[配置菜单] Knob Assign</text>
+  <rect x="60" y="135" width="320" height="44" class="card"/>
+  <text x="72" y="163" class="label">目标旋钮: OP_KNOB_3</text>
+  <rect x="60" y="190" width="320" height="44" class="card"/>
+  <text x="72" y="218" class="label">当前功能: RF_GAIN</text>
+  <rect x="60" y="245" width="320" height="90" class="card"/>
+  <text x="72" y="270" class="label">可选:</text>
+  <text x="72" y="295" class="value" style="font-size:24px">VFO  AF  RF  MIC  PWR</text>
+  <rect x="60" y="340" width="95" height="18" class="ok"/>
+  <text x="62" y="354" class="btnText">触摸确认</text>
+
+  <!-- TELEMETRY PAGE POWER -->
+  <rect x="460" y="90" width="360" height="270" class="screen"/>
+  <text x="480" y="120" class="label">[运行页 1/3] TX POWER</text>
+  <text x="480" y="180" class="label">当前发射功率</text>
+  <text x="480" y="240" class="value">100 W</text>
+  <rect x="480" y="280" width="320" height="20" class="card"/>
+  <rect x="480" y="280" width="265" height="20" class="ok"/>
+  <text x="480" y="332" class="label">触摸切换下一页</text>
+
+  <!-- TELEMETRY PAGE SWR -->
+  <rect x="880" y="90" width="360" height="270" class="screen"/>
+  <text x="900" y="120" class="label">[运行页 2/3] SWR</text>
+  <text x="900" y="180" class="label">驻波比</text>
+  <text x="900" y="240" class="value">1.3 : 1</text>
+  <circle cx="920" cy="300" r="9" class="ok"/>
+  <text x="940" y="306" class="label">正常</text>
+
+  <!-- TELEMETRY PAGE S-METER -->
+  <rect x="40" y="430" width="360" height="270" class="screen"/>
+  <text x="60" y="460" class="label">[运行页 3/3] S-METER</text>
+  <text x="60" y="520" class="label">当前信号强度</text>
+  <text x="60" y="580" class="value">S9 +10</text>
+  <rect x="60" y="610" width="320" height="16" class="card"/>
+  <rect x="60" y="610" width="290" height="16" class="warn"/>
+
+  <!-- QUICK STATUS BAR -->
+  <rect x="460" y="430" width="780" height="270" class="screen"/>
+  <text x="480" y="460" class="label">状态条（所有页面顶部一致）</text>
+  <rect x="480" y="475" width="740" height="42" class="card"/>
+  <text x="495" y="502" class="btnText">VFO-A: 7.100.000   MODE: LSB   STEP: 100Hz   CAT: OK   MENU_TIMEOUT: 10s</text>
+
+  <text x="480" y="550" class="label">触摸热区建议</text>
+  <rect x="480" y="565" width="220" height="90" class="btn"/>
+  <text x="545" y="615" class="btnText">上一页</text>
+  <rect x="740" y="565" width="220" height="90" class="btn"/>
+  <text x="805" y="615" class="btnText">下一页</text>
+  <rect x="1000" y="565" width="220" height="90" class="btn"/>
+  <text x="1060" y="615" class="btnText">确认</text>
+
+  <text x="40" y="760" class="label">备注：屏幕实际分辨率 320x240，本图为放大设计示意；字体/颜色可按强光环境调整。</text>
+</svg>
