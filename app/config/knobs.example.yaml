@@ -1,10 +1,10 @@
  (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
 diff --git a/config/knobs.example.yaml b/config/knobs.example.yaml
 new file mode 100644
-index 0000000000000000000000000000000000000000..9e1cd2129d7d064f305255d45cefbb7ea3b1b059
+index 0000000000000000000000000000000000000000..8a683792bcda3209570208813ee4a58cdba931ca
 --- /dev/null
 +++ b/config/knobs.example.yaml
-@@ -0,0 +1,194 @@
+@@ -0,0 +1,210 @@
 +platform:
 +  board: raspberry_pi_zero_2w
 +  alias: pi_2zw
@@ -25,6 +25,9 @@ index 0000000000000000000000000000000000000000..9e1cd2129d7d064f305255d45cefbb7e
 +  debounce_ms: 3
 +  min_command_interval_ms: 30
 +  menu_idle_timeout_s: 10
++  expected_operation_knobs: 6
++  expected_config_knobs: 1
++  min_buttoned_operation_knobs: 4
 +
 +state:
 +  # LCD运行页可展示
@@ -42,10 +45,10 @@ index 0000000000000000000000000000000000000000..9e1cd2129d7d064f305255d45cefbb7e
 +
 +display:
 +  lcd:
-+    model: taojinchi_2p4_uart_tft_touch
-+    interface: uart
++    model: hdmi_3p5_touch
++    interface: hdmi
 +    touch: true
-+    resolution: [320, 240]
++    resolution: [480, 320]
 +    touch_switch_page: true
 +    telemetry_pages: [tx_power_w, swr, s_meter]
 +  oled:
@@ -59,11 +62,15 @@ index 0000000000000000000000000000000000000000..9e1cd2129d7d064f305255d45cefbb7e
 +      op_knob_2: {address: 0x3D}
 +      op_knob_3: {address: 0x3E}
 +      op_knob_4: {address: 0x3F}
++      op_knob_5: {address: 0x3A}
++      op_knob_6: {address: 0x3B}
 +    default_assignments:
 +      op_knob_1: vfo
 +      op_knob_2: af_gain
 +      op_knob_3: rf_gain
 +      op_knob_4: tx_power
++      op_knob_5: af_gain
++      op_knob_6: rf_gain
 +    profiles:
 +      - name: vfo
 +        value_key: vfo_a_hz
@@ -195,6 +202,15 @@ index 0000000000000000000000000000000000000000..9e1cd2129d7d064f305255d45cefbb7e
 +  - name: op_knob_4
 +    kind: operation
 +    pins: {a: 16, b: 20, button: 21}
++
++
++  - name: op_knob_5
++    kind: operation
++    pins: {a: 18, b: 4}
++
++  - name: op_knob_6
++    kind: operation
++    pins: {a: 7, b: 8}
 +
 +  - name: cfg_knob
 +    kind: config
