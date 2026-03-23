@@ -100,6 +100,3 @@
   <text x="1085" y="864" class="small">2) TFT、CAT 串口电平需匹配（建议 3.3V TTL 或 USB 串口）。</text>
   <text x="1085" y="888" class="small">3) 所有模块共地；编码器建议硬件去抖与屏蔽线。</text>
 </svg>
- 
-EOF
-)
