@@ -21,8 +21,8 @@
     </marker>
   </defs>
 
-  <text x="30" y="50" class="title">HyTalk 硬件接线图（Raspberry Pi Zero 2 W + FT-710）</text>
-  <text x="30" y="82" class="subtitle">4 个操作旋钮 + 1 个配置旋钮 + 4x OLED(0.91" IIC 128x32) + 2.4" UART TFT 触摸屏 + Yaesu CAT 串口</text>
+  <text x="30" y="50" class="title">HyTalk 硬件接线图（Raspberry Pi Zero 2 W  FT-710）</text>
+  <text x="30" y="82" class="subtitle">6 个操作旋钮  1 个配置旋钮  6x OLED(0.91" IIC 128x32)  3.5" HDMI 触摸屏  Yaesu CAT 串口</text>
 
   <!-- Pi -->
   <rect x="560" y="160" width="480" height="430" class="box pi"/>
@@ -39,11 +39,11 @@
   <text x="610" y="444" class="small">OP4: A16 B20 BTN21</text>
   <text x="610" y="467" class="small">CFG: A12 B19 BTN26</text>
 
-  <!-- TFT -->
+  <!-- HDMI Display -->
   <rect x="1160" y="180" width="360" height="210" class="box lcd"/>
-  <text x="1185" y="220" class="txt">陶晶驰 2.4" UART TFT 触摸屏</text>
-  <text x="1185" y="248" class="small">分辨率 320x240</text>
-  <text x="1185" y="272" class="small">VCC, GND, TX, RX (+触摸协议同串口)</text>
+  <text x="1185" y="220" class="txt">3.5" HDMI 触摸屏</text>
+  <text x="1185" y="248" class="small">分辨率 480x320</text>
+  <text x="1185" y="272" class="small">HDMI 视频  USB/I2C 触摸(视屏幕驱动)</text>
 
   <!-- Radio -->
   <rect x="1160" y="430" width="360" height="160" class="box"/>
@@ -92,7 +92,7 @@
   <!-- Legend -->
   <rect x="1060" y="640" width="460" height="250" class="box"/>
   <text x="1085" y="680" class="txt">图例 / 注意事项</text>
-  <line x1="1085" y1="710" x2="1170" y2="710" class="wire-uart"/><text x="1185" y="716" class="legend">UART（TFT / CAT）</text>
+  <line x1="1085" y1="710" x2="1170" y2="710" class="wire-uart"/><text x="1185" y="716" class="legend">UART（CAT）</text>
   <line x1="1085" y1="740" x2="1170" y2="740" class="wire-i2c"/><text x="1185" y="746" class="legend">I2C（4x OLED 共总线）</text>
   <line x1="1085" y1="770" x2="1170" y2="770" class="wire-gpio"/><text x="1185" y="776" class="legend">GPIO（编码器 A/B/SW）</text>
   <line x1="1085" y1="800" x2="1170" y2="800" class="wire-pwr"/><text x="1185" y="806" class="legend">电源/地（示意）</text>
@@ -100,3 +100,6 @@
   <text x="1085" y="864" class="small">2) TFT、CAT 串口电平需匹配（建议 3.3V TTL 或 USB 串口）。</text>
   <text x="1085" y="888" class="small">3) 所有模块共地；编码器建议硬件去抖与屏蔽线。</text>
 </svg>
+ 
+EOF
+)
