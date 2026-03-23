@@ -1,21 +1,20 @@
-+# HyTalk - Yaesu FT-710 CAT 多旋钮控制器（Raspberry Pi Zero 2 W）
-+
+
 +本版本按你的硬件目标设计：
 +
 +## 0. 主控硬件
 +
 +- 主控固定为 **树莓派 Zero 2 W（你说的“树莓派2zw”）**；
 +- 建议使用稳定 5V 供电并为串口设备单独供电/共地；
-+- 若启用大量外设（LCD 触摸 + 5 个编码器 + 4 个 OLED），建议加 I2C 上拉与电源滤波。
++- 若启用大量外设（LCD 触摸 + 7 个编码器 + 6 个 OLED），建议加 I2C 上拉与电源滤波。
 +
-+- **4 个操作旋钮**（每个旋钮带按键）；
++- **6 个操作旋钮**：其中 4 个带按键 + 2 个可选双层编码器（无按键）；
 +- **1 个配置旋钮**（用于菜单配置）；
-+- **1 块陶晶驰 2.4 寸串口 TFT 触摸液晶屏（320×240）**（菜单 + 运行信息）；
-+- **4 块 OLED 点阵屏（0.91 寸 IIC 四针，128×32）**（每个操作旋钮一块，显示当前功能与值）。
++- **1 块3.5 寸 HDMI 触摸屏（480×320）**（菜单 + 运行信息）；
++- **6 块 OLED 点阵屏（0.91 寸 IIC 四针，128×32）**（每个操作旋钮一块，显示当前功能与值）。
 +
 +## 1. 系统功能
 +
-+### 操作旋钮（4个）
++### 操作旋钮（6个）
 +
 +- 每个操作旋钮并不固定功能，而是可以被映射为：
 +  - VFO 频率
@@ -35,7 +34,7 @@
 +- 再按一下切换到功能 profile 选择；
 +- 再按一下确认分配并退出菜单。
 +
-+### LCD（陶晶驰2.4寸串口TFT触摸屏，320×240）
++### LCD（3.5寸 HDMI 触摸屏，480×320）
 +
 +- 菜单模式：显示“当前选中旋钮 + 待分配功能 + 可选列表”；
 +- 运行模式：默认显示电台信息页（如发射功率、SWR、S 表）；
@@ -69,7 +68,7 @@
 +
 +- 串口参数（`serial.*`）
 +- GPIO 引脚（`knobs[].pins`）
-+- LCD/OLED 型号与总线（`display.*`，本例 LCD 为陶晶驰 2.4 寸串口 TFT 触摸屏 320×240，OLED 为 0.91 寸 IIC 四针 128×32）
++- LCD/OLED 型号与总线（`display.*`，本例 LCD 为 3.5 寸 HDMI 触摸屏 480×320，OLED 为 0.91 寸 IIC 四针 128×32）
 +- 菜单超时（`runtime.menu_idle_timeout_s`，默认 10 秒）
 +- 功能 profile 和默认分配（`display.oled.profiles` / `default_assignments`）
 +
@@ -82,8 +81,24 @@
 +## 6. 说明
 +
 +- 当前 LCD/OLED 为**抽象层**，默认以日志方式输出，便于先跑通控制逻辑；
-+- 接入真实屏幕时，替换 `LcdDisplay` / `OledDisplay` 的渲染实现即可（LCD 按陶晶驰串口屏协议适配；OLED 推荐 SSD1306 0.91" 128×32 IIC 四针模块）；
-+- 本版本会校验旋钮数量必须是 **4 个 operation + 1 个 config**。
++- 接入真实屏幕时，替换 `LcdDisplay` / `OledDisplay` 的渲染实现即可（LCD 使用 HDMI 输出 + 触摸输入驱动适配；OLED 推荐 SSD1306 0.91" 128×32 IIC 四针模块）；
++- 本版本默认校验为 **6 个 operation + 1 个 config**，且至少 4 个操作旋钮带按钮（可在 `runtime.expected_*` 调整）。
++
++## 7. 硬件接线图
++
++![HyTalk 硬件接线图](docs/hardware_wiring_diagram.svg)
++
++> 说明：这是项目默认示例接线，具体引脚可按 `config/knobs.example.yaml` 调整。
++
++
++## 8. HDMI 液晶界面设计文件
++
++- 界面设计稿（SVG）：`docs/ui/hdmi_3p5_lcd_ui.svg`
++- 界面规范说明：`docs/ui/hdmi_3p5_lcd_ui_spec.md`
++- 页面结构定义（JSON）：`docs/ui/hdmi_3p5_lcd_ui_pages.json`
++- HMI 源模板：`docs/ui/hdmi_3p5_ft710.hmi`
++
++![HDMI液晶界面设计稿](docs/ui/hdmi_3p5_lcd_ui.svg)
  
 EOF
 )
