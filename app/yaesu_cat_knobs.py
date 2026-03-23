@@ -1,11 +1,4 @@
- (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/app/yaesu_cat_knobs.py b/app/yaesu_cat_knobs.py
-new file mode 100644
-index 0000000000000000000000000000000000000000..ba91c12f44306c59359b1e63aca87bb4fcd41993
---- /dev/null
-+++ b/app/yaesu_cat_knobs.py
-@@ -0,0 +1,475 @@
-+#!/usr/bin/env python3
+
 +"""Yaesu CAT multi-knob controller for Raspberry Pi.
 +
 +支持：
@@ -435,13 +428,31 @@ index 0000000000000000000000000000000000000000..ba91c12f44306c59359b1e63aca87bb4
 +    for key in ("serial", "cat", "knobs", "display"):
 +        if key not in config:
 +            raise ValueError(f"Missing required config key: {key}")
++
 +    knobs = config["knobs"]
 +    if not isinstance(knobs, list):
 +        raise ValueError("knobs must be list")
-+    operation_count = sum(1 for k in knobs if k.get("kind", "operation") == "operation")
-+    config_count = sum(1 for k in knobs if k.get("kind") == "config")
-+    if operation_count != 4 or config_count != 1:
-+        raise ValueError("This build expects exactly 4 operation knobs and 1 config knob")
++
++    runtime_cfg = config.get("runtime", {})
++    expected_operation_knobs = int(runtime_cfg.get("expected_operation_knobs", 6))
++    expected_config_knobs = int(runtime_cfg.get("expected_config_knobs", 1))
++    min_buttoned_operation_knobs = int(runtime_cfg.get("min_buttoned_operation_knobs", 4))
++
++    operation_knobs = [k for k in knobs if k.get("kind", "operation") == "operation"]
++    config_knobs = [k for k in knobs if k.get("kind") == "config"]
++    buttoned_operation_knobs = sum(1 for k in operation_knobs if k.get("pins", {}).get("button") is not None)
++
++    if len(operation_knobs) != expected_operation_knobs or len(config_knobs) != expected_config_knobs:
++        raise ValueError(
++            f"Expected {expected_operation_knobs} operation knob(s) and {expected_config_knobs} config knob(s), "
++            f"got {len(operation_knobs)} and {len(config_knobs)}"
++        )
++
++    if buttoned_operation_knobs < min_buttoned_operation_knobs:
++        raise ValueError(
++            f"Need at least {min_buttoned_operation_knobs} buttoned operation knob(s), "
++            f"got {buttoned_operation_knobs}"
++        )
 +
 +
 +def run(config_path: Path) -> int:
